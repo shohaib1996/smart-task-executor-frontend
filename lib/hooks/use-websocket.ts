@@ -50,6 +50,23 @@ export function useWorkflowWebSocket(
         // Show toasts for relevant events
         if (data.type === "notification") {
           toast.info(data.message);
+        } else if (data.type === "slot_selection") {
+          // Show warning if preferred time had conflicts
+          const conflictInfo = data.data?.conflict_info as { reason: string } | undefined;
+          if (conflictInfo?.reason) {
+            toast.error(
+              `Your preferred time is not available: ${conflictInfo.reason}`,
+              { duration: 10000 }
+            );
+          }
+          // Show warning if some attendee calendars couldn't be accessed
+          const inaccessible = data.data?.inaccessible_calendars as string[] | undefined;
+          if (inaccessible && inaccessible.length > 0) {
+            toast.warning(
+              `Could not check availability for: ${inaccessible.join(", ")}. Their calendars are private or not on Google.`,
+              { duration: 8000 }
+            );
+          }
         } else if (data.type === "approval_request") {
           toast.warning("Action requires approval: " + data.action_title);
         } else if (data.type === "error") {

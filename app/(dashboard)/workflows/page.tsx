@@ -16,10 +16,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { parseUTCDate } from "@/lib/utils";
 
 export default function WorkflowListPage() {
   const [page, setPage] = useState(0);
-  const limit = 20;
+  const limit = 9;
   const {
     data: workflows,
     isLoading,
@@ -70,7 +71,7 @@ export default function WorkflowListPage() {
                 <div className="flex items-center justify-between">
                   <WorkflowStatusBadge status={workflow.status} />
                   <span className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(workflow.created_at), {
+                    {formatDistanceToNow(parseUTCDate(workflow.created_at), {
                       addSuffix: true,
                     })}
                   </span>

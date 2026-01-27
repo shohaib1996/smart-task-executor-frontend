@@ -25,6 +25,8 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
+        // Also clear the cookie to prevent middleware redirect loop
+        document.cookie = "token=; path=/; max-age=0";
         window.location.href = "/login";
       }
     }

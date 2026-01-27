@@ -60,9 +60,17 @@ export interface Workflow {
   completed_at?: string;
 }
 
+export interface PendingSlot {
+  id: string;
+  start: string;
+  end: string;
+  duration_minutes: number;
+}
+
 export interface WorkflowDetail extends Workflow {
   actions: Action[];
   audit_logs: AuditLog[];
+  pending_slots: PendingSlot[];
 }
 
 export interface ActionApproval {

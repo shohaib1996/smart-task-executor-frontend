@@ -1,7 +1,7 @@
 import { AuditLog } from "@/lib/types/workflow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { cn, parseUTCDate } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { CheckCircle2, AlertCircle, Info, Clock } from "lucide-react";
 
@@ -53,7 +53,7 @@ export function WorkflowTimeline({ logs }: { logs: AuditLog[] }) {
                   <div className="flex flex-col gap-1">
                     <span className="text-sm font-medium">{log.message}</span>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(log.timestamp), {
+                      {formatDistanceToNow(parseUTCDate(log.timestamp), {
                         addSuffix: true,
                       })}
                     </span>

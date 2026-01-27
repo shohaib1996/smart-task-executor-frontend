@@ -11,8 +11,8 @@ function CallbackHandler() {
     const token = searchParams.get("token");
     if (token) {
       localStorage.setItem("token", token);
-      // Set cookie for middleware
-      document.cookie = `token=${token}; path=/; max-age=2592000; SameSite=Lax`;
+      // Set cookie for middleware (30 minutes = 1800 seconds to match JWT expiration)
+      document.cookie = `token=${token}; path=/; max-age=1800; SameSite=Lax`;
       router.push("/");
     } else {
       // Handle error or redirect to login
