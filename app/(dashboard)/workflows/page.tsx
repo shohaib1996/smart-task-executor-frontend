@@ -60,13 +60,16 @@ export default function WorkflowListPage() {
       </div>
 
       {workflows?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-lg">
+        <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#c19ee0] dark:border-[#9163cb] rounded-lg bg-[#dec9e9]/20 dark:bg-[#9163cb]/10">
           <p className="text-muted-foreground">No workflows found.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {workflows?.map((workflow) => (
-            <Card key={workflow.id} className="flex flex-col">
+            <Card
+              key={workflow.id}
+              className="flex flex-col hover:border-[#9163cb] dark:hover:border-[#c19ee0] transition-colors"
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <WorkflowStatusBadge status={workflow.status} />

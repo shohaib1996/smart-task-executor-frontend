@@ -80,7 +80,7 @@ export function ActionCard({
         {action.status === "pending" && action.requires_approval && hasDecision && (
           <div className={cn(
             "flex items-center gap-2 text-sm font-medium",
-            decision ? "text-green-600" : "text-red-600"
+            decision ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
           )}>
             {decision ? (
               <>

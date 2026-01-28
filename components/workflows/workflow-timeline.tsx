@@ -37,7 +37,7 @@ export function WorkflowTimeline({ logs, workflowStatus }: WorkflowTimelineProps
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-hidden">
         <ScrollArea className="h-full px-6 pb-6">
-          <div className="relative border-l ml-3 my-2 space-y-6">
+          <div className="relative border-l border-[#c19ee0] dark:border-[#9163cb]/50 ml-3 my-2 space-y-6">
             {logs.length === 0 && (
               <p className="pl-6 text-sm text-muted-foreground">
                 No activity yet.
@@ -48,29 +48,29 @@ export function WorkflowTimeline({ logs, workflowStatus }: WorkflowTimelineProps
               const showSpinner = isLastLog && showSpinnerOnLast;
 
               let Icon = Info;
-              let color = "text-blue-500";
+              let color = "text-[#9163cb] dark:text-[#c19ee0]";
 
               if (
                 log.event_type.includes("error") ||
                 log.event_type.includes("fail")
               ) {
                 Icon = AlertCircle;
-                color = "text-red-500";
+                color = "text-red-500 dark:text-red-400";
               } else if (
                 log.event_type.includes("inaccessible") ||
                 log.event_type.includes("warning")
               ) {
                 Icon = AlertTriangle;
-                color = "text-amber-500";
+                color = "text-amber-500 dark:text-amber-400";
               } else if (
                 log.event_type.includes("complete") ||
                 log.event_type.includes("approve")
               ) {
                 Icon = CheckCircle2;
-                color = "text-green-500";
+                color = "text-emerald-500 dark:text-emerald-400";
               } else if (log.event_type.includes("start")) {
                 Icon = Clock;
-                color = "text-yellow-500";
+                color = "text-[#6247aa] dark:text-[#c19ee0]";
               }
 
               return (

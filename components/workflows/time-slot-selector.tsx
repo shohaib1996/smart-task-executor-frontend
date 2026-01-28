@@ -55,9 +55,9 @@ export function TimeSlotSelector({
   };
 
   return (
-    <Card className="border-primary/50 bg-primary/5">
+    <Card className="border-[#9163cb] dark:border-[#b185db] bg-[#dec9e9]/20 dark:bg-[#9163cb]/15">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="flex items-center gap-2 text-lg text-[#6247aa] dark:text-[#c19ee0]">
           <CalendarDays className="h-5 w-5" />
           Select a Time Slot
         </CardTitle>
@@ -100,9 +100,9 @@ export function TimeSlotSelector({
                 disabled={isLoading}
                 className={cn(
                   "flex items-center justify-between p-3 rounded-lg border text-left transition-all",
-                  "hover:border-primary/50 hover:bg-primary/5",
+                  "hover:border-[#9163cb] dark:hover:border-[#c19ee0] hover:bg-[#dec9e9]/30 dark:hover:bg-[#9163cb]/25",
                   isSelected
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    ? "border-[#6247aa] dark:border-[#c19ee0] bg-[#c19ee0]/30 dark:bg-[#9163cb]/35 ring-1 ring-[#6247aa] dark:ring-[#c19ee0]"
                     : "border-border bg-background"
                 )}
               >
@@ -111,7 +111,7 @@ export function TimeSlotSelector({
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-full",
                       isSelected
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-[#6247aa] dark:bg-[#c19ee0] text-white dark:text-[#1a1525]"
                         : "bg-muted"
                     )}
                   >

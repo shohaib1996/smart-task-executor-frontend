@@ -37,9 +37,11 @@ export function CreateWorkflowForm() {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto border-[#c19ee0] dark:border-[#9163cb]">
       <CardHeader>
-        <CardTitle>Create New Workflow</CardTitle>
+        <CardTitle className="text-[#6247aa] dark:text-[#c19ee0]">
+          Create New Workflow
+        </CardTitle>
         <CardDescription>
           Describe what you want to achieve in plain English. The AI will plan
           and execute it.
@@ -51,7 +53,7 @@ export function CreateWorkflowForm() {
             placeholder="e.g., Schedule a meeting with John next Tuesday at 2 PM and send an invite."
             value={request}
             onChange={(e) => setRequest(e.target.value)}
-            className="min-h-[150px]"
+            className="min-h-[150px] focus-visible:ring-[#9163cb] dark:focus-visible:ring-[#b185db]"
             disabled={createWorkflow.isPending}
           />
         </CardContent>
