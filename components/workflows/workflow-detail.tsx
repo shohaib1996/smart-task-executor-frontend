@@ -38,6 +38,8 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
   // Track approval decisions: action_id -> approved (true/false)
   const [approvalDecisions, setApprovalDecisions] = useState<Record<string, boolean>>({});
   const [isSelectingSlot, setIsSelectingSlot] = useState(false);
+  // Track if user has already selected a slot (to hide the selector)
+  const [slotSelected, setSlotSelected] = useState(false);
 
   // Real-time updates
   useWorkflowStream(workflow.id);
@@ -85,6 +87,7 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
       if (sent) {
         toast.success("Time slot selected! Processing...");
         setWsSlots([]);
+        setSlotSelected(true);
       }
       // If not sent, the selectOption function already sets connectionLost=true
       // which will trigger the modal
@@ -219,7 +222,7 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
       <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
         <div className="space-y-6">
           {/* Time Slot Selection UI */}
-          {pendingSlots.length > 0 && (
+          {pendingSlots.length > 0 && !slotSelected && (
             <TimeSlotSelector
               slots={pendingSlots}
               onSelect={handleSlotSelect}
