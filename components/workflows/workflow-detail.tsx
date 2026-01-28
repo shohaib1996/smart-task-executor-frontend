@@ -12,13 +12,21 @@ import { ActionCard } from "./action-card";
 import { WorkflowStatusBadge } from "./status-badge";
 import { TimeSlotSelector, ConflictInfo } from "./time-slot-selector";
 import { useCancelWorkflow, useApproveActions } from "@/lib/hooks/use-workflows";
-import { ArrowLeft, Ban, Send } from "lucide-react";
+import { ArrowLeft, Ban, Send, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { useWorkflowStream } from "@/lib/hooks/use-workflow-stream";
 import { useWorkflowWebSocket } from "@/lib/hooks/use-websocket";
 import { toast } from "sonner";
 import { parseUTCDate } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
   const cancelWorkflow = useCancelWorkflow();
@@ -33,7 +41,7 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
 
   // Real-time updates
   useWorkflowStream(workflow.id);
-  const { messages, selectOption } = useWorkflowWebSocket(workflow.id);
+  const { messages, selectOption, connectionLost } = useWorkflowWebSocket(workflow.id);
 
   // Listen for slot_selection messages from WebSocket
   useEffect(() => {
@@ -46,7 +54,7 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
     }
   }, [messages]);
 
-  // Combine slots from API response and WebSocket (API takes precedence on initial load)
+  // Combine slots from API response and WebSocket (WebSocket takes precedence for real-time)
   const pendingSlots = useMemo(() => {
     // If we got slots from WebSocket, use those (they're more recent)
     if (wsSlots.length > 0) return wsSlots;
@@ -54,12 +62,32 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
     return workflow.pending_slots || [];
   }, [wsSlots, workflow.pending_slots]);
 
+  // Combine conflict info from API response and WebSocket
+  const conflictInfo = useMemo(() => {
+    // WebSocket takes precedence if available
+    if (wsConflictInfo) return wsConflictInfo;
+    // Otherwise use API response
+    return workflow.conflict_info || null;
+  }, [wsConflictInfo, workflow.conflict_info]);
+
+  // Combine inaccessible calendars from API response and WebSocket
+  const inaccessibleCalendars = useMemo(() => {
+    // WebSocket takes precedence if available
+    if (wsInaccessibleCalendars.length > 0) return wsInaccessibleCalendars;
+    // Otherwise use API response
+    return workflow.inaccessible_calendars || [];
+  }, [wsInaccessibleCalendars, workflow.inaccessible_calendars]);
+
   const handleSlotSelect = async (slotId: string) => {
     setIsSelectingSlot(true);
     try {
-      selectOption(slotId);
-      toast.success("Time slot selected! Processing...");
-      setWsSlots([]);
+      const sent = selectOption(slotId);
+      if (sent) {
+        toast.success("Time slot selected! Processing...");
+        setWsSlots([]);
+      }
+      // If not sent, the selectOption function already sets connectionLost=true
+      // which will trigger the modal
     } catch {
       toast.error("Failed to select time slot");
     } finally {
@@ -197,8 +225,8 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
               onSelect={handleSlotSelect}
               isLoading={isSelectingSlot}
               message={wsMessage}
-              conflictInfo={wsConflictInfo}
-              inaccessibleCalendars={wsInaccessibleCalendars}
+              conflictInfo={conflictInfo}
+              inaccessibleCalendars={inaccessibleCalendars}
             />
           )}
 
@@ -263,9 +291,31 @@ export function WorkflowDetail({ workflow }: { workflow: WorkflowDetailType }) {
           )}
         </div>
         <div>
-          <WorkflowTimeline logs={workflow.audit_logs || []} />
+          <WorkflowTimeline logs={workflow.audit_logs || []} workflowStatus={workflow.status} />
         </div>
       </div>
+
+      {/* Connection Lost Modal */}
+      <Dialog open={connectionLost} onOpenChange={() => {}}>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <WifiOff className="h-5 w-5 text-destructive" />
+              Connection Lost
+            </DialogTitle>
+            <DialogDescription>
+              The connection to the server has been lost. This can happen due to
+              network issues or inactivity. To continue scheduling your meeting,
+              please create a new workflow.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button asChild>
+              <Link href="/">Create New Workflow</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

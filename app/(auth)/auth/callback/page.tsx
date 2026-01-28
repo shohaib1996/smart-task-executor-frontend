@@ -13,7 +13,7 @@ function CallbackHandler() {
       localStorage.setItem("token", token);
       // Set cookie for middleware (30 minutes = 1800 seconds to match JWT expiration)
       document.cookie = `token=${token}; path=/; max-age=1800; SameSite=Lax`;
-      router.push("/");
+      router.push("/workflows");
     } else {
       // Handle error or redirect to login
       router.push("/login?error=missing_token");

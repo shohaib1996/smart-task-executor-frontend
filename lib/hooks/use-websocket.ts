@@ -12,13 +12,17 @@ export function useWorkflowWebSocket(
   enabled = true,
 ) {
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionLost, setConnectionLost] = useState(false);
   const [messages, setMessages] = useState<WSMessage[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
+  const wasConnectedRef = useRef(false);
 
-  const sendMessage = useCallback((message: WSMessage) => {
+  const sendMessage = useCallback((message: WSMessage): boolean => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message));
+      return true;
     }
+    return false;
   }, []);
 
   useEffect(() => {
@@ -37,6 +41,7 @@ export function useWorkflowWebSocket(
 
     ws.onopen = () => {
       setIsConnected(true);
+      wasConnectedRef.current = true;
     };
 
     ws.onmessage = (event) => {
@@ -79,11 +84,19 @@ export function useWorkflowWebSocket(
 
     ws.onclose = () => {
       setIsConnected(false);
+      // Only mark as connection lost if we were previously connected
+      if (wasConnectedRef.current) {
+        setConnectionLost(true);
+      }
     };
 
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
       setIsConnected(false);
+      // Only mark as connection lost if we were previously connected
+      if (wasConnectedRef.current) {
+        setConnectionLost(true);
+      }
     };
 
     // Ping mechanism
@@ -102,14 +115,20 @@ export function useWorkflowWebSocket(
   }, [workflowId, enabled]);
 
   const selectOption = useCallback(
-    (optionId: string) => {
-      sendMessage({ type: "select_option", option_id: optionId } as any);
+    (optionId: string): boolean => {
+      const sent = sendMessage({ type: "select_option", option_id: optionId } as any);
+      if (!sent) {
+        // Connection is not open, mark as lost
+        setConnectionLost(true);
+      }
+      return sent;
     },
     [sendMessage],
   );
 
   return {
     isConnected,
+    connectionLost,
     messages,
     sendMessage,
     selectOption,

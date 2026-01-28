@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Play, PlusCircle } from "lucide-react";
+import { Home, Play, PlusCircle } from "lucide-react";
 
 const routes = [
   {
-    label: "Dashboard",
-    icon: LayoutDashboard,
+    label: "Home",
+    icon: Home,
     href: "/",
   },
   {

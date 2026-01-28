@@ -33,11 +33,13 @@ export function middleware(request: NextRequest) {
   // Check if token exists and is not expired
   const hasValidToken = token && !isTokenExpired(token);
 
-  // Paths that don't require auth
+  // Public paths that don't require auth
+  const isPublicPath = pathname === "/" || pathname.startsWith("/login") || pathname.startsWith("/auth");
+
   if (pathname.startsWith("/login") || pathname.startsWith("/auth")) {
     if (hasValidToken) {
-      // If already logged in with valid token, redirect to dashboard
-      return NextResponse.redirect(new URL("/", request.url));
+      // If already logged in with valid token, redirect to workflows dashboard
+      return NextResponse.redirect(new URL("/workflows", request.url));
     }
     // Clear expired token cookie if it exists
     if (token && !hasValidToken) {
@@ -49,7 +51,8 @@ export function middleware(request: NextRequest) {
   }
 
   // Protected paths - require valid (non-expired) token
-  if (!hasValidToken) {
+  // Skip auth check for public paths (home page is now a landing page)
+  if (!isPublicPath && !hasValidToken) {
     return clearTokenCookie(request);
   }
 

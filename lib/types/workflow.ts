@@ -67,10 +67,19 @@ export interface PendingSlot {
   duration_minutes: number;
 }
 
+export interface ConflictInfo {
+  requested_start: string;
+  requested_end: string;
+  conflicting_calendars: string[];
+  reason: string;
+}
+
 export interface WorkflowDetail extends Workflow {
   actions: Action[];
   audit_logs: AuditLog[];
   pending_slots: PendingSlot[];
+  conflict_info?: ConflictInfo | null;
+  inaccessible_calendars?: string[];
 }
 
 export interface ActionApproval {
