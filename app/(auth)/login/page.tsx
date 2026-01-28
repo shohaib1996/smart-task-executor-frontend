@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import {
   Card,
@@ -8,7 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Zap, Calendar, Shield } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Zap, Calendar, Shield, AlertTriangle, Info } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -18,8 +26,66 @@ const features = [
 ];
 
 export default function LoginPage() {
+  const [showTestingModal, setShowTestingModal] = useState(false);
+
+  useEffect(() => {
+    // Show modal on first visit
+    const hasSeenModal = localStorage.getItem("hasSeenTestingModal");
+    if (!hasSeenModal) {
+      setShowTestingModal(true);
+    }
+  }, []);
+
+  const handleCloseModal = () => {
+    localStorage.setItem("hasSeenTestingModal", "true");
+    setShowTestingModal(false);
+  };
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-background p-4 relative overflow-hidden">
+      {/* Testing App Info Modal */}
+      <Dialog open={showTestingModal} onOpenChange={handleCloseModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-5 w-5" />
+              Testing App Notice
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div className="space-y-4 pt-2">
+                <p className="text-sm text-muted-foreground">
+                  This is a <strong>testing/demo application</strong>. When you sign in with Google, you may see a security warning.
+                </p>
+
+                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-4 space-y-3">
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-200 flex items-center gap-2">
+                    <Info className="h-4 w-4" />
+                    How to proceed:
+                  </p>
+                  <ol className="text-sm text-amber-700 dark:text-amber-300 space-y-2 list-decimal list-inside">
+                    <li>Click <strong>&quot;Advanced&quot;</strong> (bottom left of the warning page)</li>
+                    <li>Click <strong>&quot;Go to Smart Task Executor (unsafe)&quot;</strong></li>
+                    <li>Allow calendar access for full functionality</li>
+                  </ol>
+                </div>
+
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    <strong>Note:</strong> Google may send you a security alert email. This is normal for unverified apps. Your data is safe and only used for calendar integration.
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleCloseModal}
+                  className="w-full mt-2 px-4 py-2 bg-[#6247aa] hover:bg-[#6247aa]/90 text-white rounded-lg font-medium transition-colors"
+                >
+                  I Understand, Continue
+                </button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       {/* Background gradient orbs */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <motion.div
@@ -125,8 +191,16 @@ export default function LoginPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.4 }}
+              className="space-y-2"
             >
               <GoogleLoginButton />
+              <button
+                onClick={() => setShowTestingModal(true)}
+                className="w-full text-xs text-muted-foreground hover:text-[#6247aa] dark:hover:text-[#c19ee0] flex items-center justify-center gap-1 transition-colors"
+              >
+                <AlertTriangle className="h-3 w-3" />
+                See security warning guide
+              </button>
             </motion.div>
 
             {/* Terms */}
