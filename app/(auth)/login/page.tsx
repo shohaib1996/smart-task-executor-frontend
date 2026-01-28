@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import {
   Card,
@@ -26,18 +26,9 @@ const features = [
 ];
 
 export default function LoginPage() {
-  const [showTestingModal, setShowTestingModal] = useState(false);
-
-  useEffect(() => {
-    // Show modal on first visit
-    const hasSeenModal = localStorage.getItem("hasSeenTestingModal");
-    if (!hasSeenModal) {
-      setShowTestingModal(true);
-    }
-  }, []);
+  const [showTestingModal, setShowTestingModal] = useState(true);
 
   const handleCloseModal = () => {
-    localStorage.setItem("hasSeenTestingModal", "true");
     setShowTestingModal(false);
   };
 
