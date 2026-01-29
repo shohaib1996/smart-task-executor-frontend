@@ -12,7 +12,7 @@ export const authApi = {
     const { data } = await apiClient.get("/api/auth/me");
     return data;
   },
-  updateTimezone: async (timezone: string): Promise<{ message: string; timezone: string }> => {
+  updateTimezone: async (timezone: string): Promise<{ id: string; email: string; name: string; timezone: string }> => {
     const { data } = await apiClient.put("/api/auth/timezone", { timezone });
     return data;
   },
